@@ -1,0 +1,1 @@
+{"name":"Heart Failure Prediction","description":"Clinical-grade heart disease risk assessment tool supporting manual medical entry, bulk CSV diagnostics, and predictive analytics driven by Gemini AI.","requestFramePermissions":[],"majorCapabilities":["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]}
