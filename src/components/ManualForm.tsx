@@ -177,7 +177,7 @@ export default function ManualForm({ onAddRecord, selectedModel, onStartLoading,
           <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">Bagian 1: Profil Umum</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="patient-name">Nama Pasien / Pengenal</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="patient-name">Nama Pasien / Pengenal (Name)</label>
               <input
                 id="patient-name"
                 type="text"
@@ -190,7 +190,7 @@ export default function ManualForm({ onAddRecord, selectedModel, onStartLoading,
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="patient-age">Usia (Tahun) <span className="text-red-500">*</span></label>
+                <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="patient-age">Usia (Tahun) (Age) <span className="text-red-500">*</span></label>
                 <input
                   id="patient-age"
                   type="number"
@@ -204,7 +204,7 @@ export default function ManualForm({ onAddRecord, selectedModel, onStartLoading,
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="patient-sex">Jenis Kelamin <span className="text-red-500">*</span></label>
+                <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="patient-sex">Jenis Kelamin (Sex) <span className="text-red-500">*</span></label>
                 <select
                   id="patient-sex"
                   name="sex"
@@ -225,7 +225,7 @@ export default function ManualForm({ onAddRecord, selectedModel, onStartLoading,
           <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">Bagian 2: Indikasi Angina & Nyeri Dada</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="patient-chestpain">Tipe Nyeri Dada (CP) <span className="text-red-500">*</span></label>
+              <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="patient-chestpain">Tipe Nyeri Dada (ChestPainType) <span className="text-red-500">*</span></label>
               <select
                 id="patient-chestpain"
                 name="chestPainType"
@@ -244,7 +244,7 @@ export default function ManualForm({ onAddRecord, selectedModel, onStartLoading,
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="patient-exang">Angina Latihan <span className="text-red-500">*</span></label>
+              <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="patient-exang">Angina Latihan (ExerciseAngina) <span className="text-red-500">*</span></label>
               <select
                 id="patient-exang"
                 name="exerciseAngina"
@@ -267,7 +267,7 @@ export default function ManualForm({ onAddRecord, selectedModel, onStartLoading,
           <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">Bagian 3: Tanda Vital & Profil Darah</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="patient-bp">TD Istirahat (mmHg) <span className="text-red-500">*</span></label>
+              <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="patient-bp">TD Istirahat (RestingBP) <span className="text-red-500">*</span></label>
               <input
                 id="patient-bp"
                 type="number"
@@ -283,7 +283,7 @@ export default function ManualForm({ onAddRecord, selectedModel, onStartLoading,
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="patient-chol">Kolesterol Serum (mg/dl) <span className="text-red-500">*</span></label>
+              <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="patient-chol">Kolesterol Serum (Cholesterol) <span className="text-red-500">*</span></label>
               <input
                 id="patient-chol"
                 type="number"
@@ -299,7 +299,7 @@ export default function ManualForm({ onAddRecord, selectedModel, onStartLoading,
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="patient-fbs">Gula Darah Puasa <span className="text-red-500">*</span></label>
+              <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="patient-fbs">Gula Darah Puasa (FastingBS) <span className="text-red-500">*</span></label>
               <select
                 id="patient-fbs"
                 name="fastingBS"
@@ -320,7 +320,7 @@ export default function ManualForm({ onAddRecord, selectedModel, onStartLoading,
           <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">Bagian 4: Elektrocardiogram Uji Stres</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="patient-ecg">Hasil EKG Istirahat <span className="text-red-500">*</span></label>
+              <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="patient-ecg">Hasil EKG Istirahat (RestingECG) <span className="text-red-500">*</span></label>
               <select
                 id="patient-ecg"
                 name="restingECG"
@@ -338,7 +338,7 @@ export default function ManualForm({ onAddRecord, selectedModel, onStartLoading,
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="patient-maxhr">Detak Jantung Maksimal (bpm) <span className="text-red-500">*</span></label>
+              <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="patient-maxhr">Detak Jantung Maksimal (MaxHR) <span className="text-red-500">*</span></label>
               <input
                 id="patient-maxhr"
                 type="number"
@@ -377,7 +377,7 @@ export default function ManualForm({ onAddRecord, selectedModel, onStartLoading,
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="patient-slope">Kemiringan ST Latihan Puncak <span className="text-red-500">*</span></label>
+              <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="patient-slope">Kemiringan ST Latihan Puncak (ST_Slope) <span className="text-red-500">*</span></label>
               <select
                 id="patient-slope"
                 name="stSlope"
@@ -443,7 +443,9 @@ export default function ManualForm({ onAddRecord, selectedModel, onStartLoading,
           <div className="space-y-6">
             {/* Probability summary card */}
             <div className="bg-white border border-slate-100 rounded-2xl shadow-sm p-6 overflow-hidden relative">
-              <div className="absolute top-0 left-0 w-2 h-full bg-red-500"></div>
+              <div className={`absolute top-0 left-0 w-2 h-full ${
+                localPrediction.riskLevel === 'Positif Heart Disease' ? 'bg-red-500' : 'bg-emerald-500'
+              }`}></div>
               
               <div className="flex items-center justify-between mb-4">
                 <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Ringkasan Diagnostik</span>
