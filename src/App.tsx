@@ -44,24 +44,36 @@ export default function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ patients: cleanedPatients, modelType: model })
       });
-      if (response.ok) {
-        const data = await response.json();
-        const mlPredictions = data.predictions;
-        const updated = records.map((item, idx) => {
-          const mlPred = mlPredictions[idx];
-          return {
-            ...item,
-            prediction: {
-              ...item.prediction!,
-              heartDiseaseProbability: (mlPred && !mlPred.error) ? mlPred.heartDiseaseProbability : item.prediction!.heartDiseaseProbability,
-              riskLevel: (mlPred && !mlPred.error) ? mlPred.riskLevel : item.prediction!.riskLevel
-            }
-          };
-        });
-        updateRecordsState(updated);
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Gagal memanggil model Machine Learning.');
       }
-    } catch (err) {
+      const data = await response.json();
+      const mlPredictions = data.predictions;
+      
+      const predictionError = mlPredictions.find((p: any) => p && p.error);
+      if (predictionError) {
+        throw new Error(predictionError.error);
+      }
+
+      const updated = records.map((item, idx) => {
+        const mlPred = mlPredictions[idx];
+        if (!mlPred) {
+          throw new Error('Hasil prediksi Machine Learning tidak lengkap.');
+        }
+        return {
+          ...item,
+          prediction: {
+            ...item.prediction!,
+            heartDiseaseProbability: mlPred.heartDiseaseProbability,
+            riskLevel: mlPred.riskLevel
+          }
+        };
+      });
+      updateRecordsState(updated);
+    } catch (err: any) {
       console.error('Failed to re-evaluate records with new model:', err);
+      alert(`Gagal mengevaluasi ulang data pasien dengan model ${model.toUpperCase()}: ${err.message || err}`);
     } finally {
       setIsGlobalLoading(false);
     }
@@ -85,29 +97,40 @@ export default function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ patients: defaults, modelType: model })
       });
-      if (response.ok) {
-        const data = await response.json();
-        const mlPredictions = data.predictions;
-        const updated = defaults.map((item, idx) => {
-          const mlPred = mlPredictions[idx];
-          return {
-            ...item,
-            prediction: {
-              ...item.prediction!,
-              heartDiseaseProbability: (mlPred && !mlPred.error) ? mlPred.heartDiseaseProbability : item.prediction!.heartDiseaseProbability,
-              riskLevel: (mlPred && !mlPred.error) ? mlPred.riskLevel : item.prediction!.riskLevel
-            }
-          };
-        });
-        updateRecordsState(updated);
-        return;
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Gagal memanggil model Machine Learning.');
       }
-    } catch (err) {
+      const data = await response.json();
+      const mlPredictions = data.predictions;
+      
+      const predictionError = mlPredictions.find((p: any) => p && p.error);
+      if (predictionError) {
+        throw new Error(predictionError.error);
+      }
+
+      const updated = defaults.map((item, idx) => {
+        const mlPred = mlPredictions[idx];
+        if (!mlPred) {
+          throw new Error('Hasil prediksi Machine Learning tidak lengkap.');
+        }
+        return {
+          ...item,
+          prediction: {
+            ...item.prediction!,
+            heartDiseaseProbability: mlPred.heartDiseaseProbability,
+            riskLevel: mlPred.riskLevel
+          }
+        };
+      });
+      updateRecordsState(updated);
+      return;
+    } catch (err: any) {
       console.error('Failed to load demo patients with ML predictions:', err);
+      alert(`Gagal memuat pasien bawaan ML: ${err.message || err}`);
     } finally {
       setIsGlobalLoading(false);
     }
-    updateRecordsState(defaults);
   };
 
   // Load baseline demo records from Kaggle

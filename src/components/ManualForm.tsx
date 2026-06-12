@@ -64,7 +64,8 @@ export default function ManualForm({ onAddRecord, selectedModel, onStartLoading,
       });
 
       if (!response.ok) {
-        throw new Error('Gagal memanggil model Machine Learning.');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Gagal memanggil model Machine Learning.');
       }
 
       const mlResult = await response.json();
@@ -79,9 +80,8 @@ export default function ManualForm({ onAddRecord, selectedModel, onStartLoading,
       setAiError(null);
     } catch (err: any) {
       console.error(err);
-      const heuristicResult = predictHeartDisease(formData);
-      setLocalPrediction(heuristicResult);
-      setMlError('Gagal memanggil model Machine Learning. Menggunakan model simulasi lokal.');
+      setLocalPrediction(null);
+      setMlError(err.message || 'Gagal memanggil model Machine Learning.');
     } finally {
       setIsMlLoading(false);
       onEndLoading();

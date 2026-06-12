@@ -217,21 +217,30 @@ export default function BatchProcessor({ onImportRecords, selectedModel, onStart
         });
 
         if (!apiResponse.ok) {
-          throw new Error('Gagal menganalisis batch data menggunakan model Machine Learning.');
+          const errorData = await apiResponse.json().catch(() => ({}));
+          throw new Error(errorData.error || 'Gagal menganalisis batch data menggunakan model Machine Learning.');
         }
 
         const data = await apiResponse.json();
         const mlPredictions = data.predictions;
 
+        const predictionError = mlPredictions.find((p: any) => p && p.error);
+        if (predictionError) {
+          throw new Error(predictionError.error);
+        }
+
         const newlyParsed: PatientRecord[] = patientInputs.map((recordInput, idx) => {
           const mlPred = mlPredictions[idx];
+          if (!mlPred) {
+            throw new Error('Hasil prediksi Machine Learning tidak lengkap.');
+          }
           const heuristicResult = predictHeartDisease(recordInput);
           return {
             ...recordInput,
             prediction: {
               ...heuristicResult,
-              heartDiseaseProbability: (mlPred && !mlPred.error) ? mlPred.heartDiseaseProbability : heuristicResult.heartDiseaseProbability,
-              riskLevel: (mlPred && !mlPred.error) ? mlPred.riskLevel : heuristicResult.riskLevel
+              heartDiseaseProbability: mlPred.heartDiseaseProbability,
+              riskLevel: mlPred.riskLevel
             }
           };
         });
@@ -241,6 +250,7 @@ export default function BatchProcessor({ onImportRecords, selectedModel, onStart
 
       } catch (err: any) {
         console.error(err);
+        setParsedRecords([]);
         setErrorMsg(err.message || 'Terjadi kesalahan saat memuat/mengekstrak elemen data.');
       } finally {
         onEndLoading();
@@ -252,6 +262,7 @@ export default function BatchProcessor({ onImportRecords, selectedModel, onStart
   const reEvaluateParsedRecords = async (model: 'svm' | 'dt' | 'knn' | 'nn') => {
     if (parsedRecords.length === 0) return;
     onStartLoading('Mengevaluasi ulang pratinjau rekam medis CSV dengan model baru...');
+    setErrorMsg(null);
     try {
       const cleanedPatients = parsedRecords.map(({ id, name, age, sex, chestPainType, restingBP, cholesterol, fastingBS, restingECG, maxHR, exerciseAngina, oldpeak, stSlope }) => ({
         id, name, age, sex, chestPainType, restingBP, cholesterol, fastingBS, restingECG, maxHR, exerciseAngina, oldpeak, stSlope
@@ -261,24 +272,37 @@ export default function BatchProcessor({ onImportRecords, selectedModel, onStart
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ patients: cleanedPatients, modelType: model })
       });
-      if (response.ok) {
-        const data = await response.json();
-        const mlPredictions = data.predictions;
-        const updated = parsedRecords.map((item, idx) => {
-          const mlPred = mlPredictions[idx];
-          return {
-            ...item,
-            prediction: {
-              ...item.prediction!,
-              heartDiseaseProbability: (mlPred && !mlPred.error) ? mlPred.heartDiseaseProbability : item.prediction!.heartDiseaseProbability,
-              riskLevel: (mlPred && !mlPred.error) ? mlPred.riskLevel : item.prediction!.riskLevel
-            }
-          };
-        });
-        setParsedRecords(updated);
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Gagal mengevaluasi ulang data pasien.');
       }
-    } catch (err) {
+      const data = await response.json();
+      const mlPredictions = data.predictions;
+      
+      const predictionError = mlPredictions.find((p: any) => p && p.error);
+      if (predictionError) {
+        throw new Error(predictionError.error);
+      }
+
+      const updated = parsedRecords.map((item, idx) => {
+        const mlPred = mlPredictions[idx];
+        if (!mlPred) {
+          throw new Error('Hasil prediksi Machine Learning tidak lengkap.');
+        }
+        return {
+          ...item,
+          prediction: {
+            ...item.prediction!,
+            heartDiseaseProbability: mlPred.heartDiseaseProbability,
+            riskLevel: mlPred.riskLevel
+          }
+        };
+      });
+      setParsedRecords(updated);
+    } catch (err: any) {
       console.error('Failed to re-evaluate parsed batch records:', err);
+      setErrorMsg(err.message || 'Gagal mengevaluasi ulang data pasien.');
+      setParsedRecords([]);
     } finally {
       onEndLoading();
     }
